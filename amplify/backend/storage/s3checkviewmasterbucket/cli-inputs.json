@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3checkviewmasterbucket",
+  "bucketName": "checkview-master-bucket",
+  "policyUUID": "6afcc181",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "READ",
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ]
+}

@@ -1,0 +1,328 @@
+type Company @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String!
+  email: AWSEmail!
+  photo: String
+  location: String
+  isActive: Boolean!
+  CompanyUsers: [User] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyClients: [Client] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanySpecies: [Specie] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyVarieties: [Variety] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyGrowers: [Grower] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyExporters: [Exporter] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyPackings: [Packing] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyMeasurements: [Measurement] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyIntakeReports: [IntakeReport] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyFinishReports: [FinishReport] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyDestinationReports: [DestinationReport] @hasMany(indexName: "byCompany", fields: ["id"])
+  CompanyVisitReports: [VisitReport] @hasMany(indexName: "byCompany", fields: ["id"])
+}
+
+type User @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String!
+  email: String!
+  photo: String
+  location: String
+  isActive: Boolean!
+  isAdmin: Boolean!
+  sub: String!
+  companyID: ID! @index(name: "byCompany")
+}
+
+type Client @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String!
+  email: String!
+  photo: String
+  isActive: Boolean!
+  companyID: ID! @index(name: "byCompany")
+  ClientSpecies: [Specie] @hasMany(indexName: "byClient", fields: ["id"])
+  ClientGrowers: [Grower] @hasMany(indexName: "byClient", fields: ["id"])
+  ClientExporters: [Exporter] @hasMany(indexName: "byClient", fields: ["id"])
+  ClientPackings: [Packing] @hasMany(indexName: "byClient", fields: ["id"])
+  CompanyIntakeReports: [IntakeReport] @hasMany(indexName: "byClient", fields: ["id"])
+  ClientFinishReports: [FinishReport] @hasMany(indexName: "byClient", fields: ["id"])
+  ClientDestinationReports: [DestinationReport] @hasMany(indexName: "byClient", fields: ["id"])
+  ClientVisitReports: [VisitReport] @hasMany(indexName: "byClient", fields: ["id"])
+  Norma: Norm @hasOne
+}
+
+type Norm @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  progressive: AWSJSON
+  nonProgressive: AWSJSON
+  critical: AWSJSON
+  title: String
+}
+
+type Measurement @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  unit: String
+  minValue: Float
+  maxValue: Float
+  isActive: Boolean
+  companyID: ID! @index(name: "byCompany")
+}
+
+type PackFormat @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  isActive: Boolean
+  packingID: ID! @index(name: "byPacking")
+}
+
+type Field @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  isActive: Boolean
+  growerID: ID! @index(name: "byGrower")
+}
+
+type Packing @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  photo: String
+  isActive: Boolean
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+  PackingPackFormats: [PackFormat] @hasMany(indexName: "byPacking", fields: ["id"])
+}
+
+type Exporter @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  email: String
+  photo: String
+  isActive: Boolean
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+}
+
+type Grower @model @auth(rules: [{allow: private}, {allow: public}   ]) {
+  id: ID!
+  name: String
+  email: String
+  photo: String
+  isActive: Boolean
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+  GrowerFields: [Field] @hasMany(indexName: "byGrower", fields: ["id"])
+}
+
+type Specie @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String!
+  icon: String
+  isActive: Boolean
+  SpeciesVarieties: [Variety] @hasMany(indexName: "bySpecie", fields: ["id"])
+  clientID: ID! @index(name: "byClient")
+  companyID: ID! @index(name: "byCompany")
+}
+
+type Variety @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String!
+  icon: String
+  isActive: Boolean
+  specieID: ID! @index(name: "bySpecie")
+  companyID: ID! @index(name: "byCompany")
+  VarietyDefectVarieties: [AttributeVariety] @hasMany(indexName: "byVariety", fields: ["id"])
+  VarietySizeVarieties: [AttributeVariety] @hasMany(indexName: "byVariety", fields: ["id"])
+  VarietyColorVarieties: [AttributeVariety] @hasMany(indexName: "byVariety", fields: ["id"])
+  VarietyAttributeVarieties: [AttributeVariety] @hasMany(indexName: "byVariety", fields: ["id"])
+}
+
+type SizeVariety @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  varietyID: ID! @index(name: "byVariety")
+  isActive: Boolean
+}
+
+type ColorVariety @model @auth(rules: [{allow: private} , {allow: public}  ]) {
+  id: ID!
+  name: String
+  varietyID: ID! @index(name: "byVariety")
+}
+
+type AttributeVariety @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String
+  unit: String
+  minValue: Float
+  maxValue: Float
+  minIdeal: Float
+  maxIdeal: Float
+  isCritical: Boolean
+  varietyID: ID! @index(name: "byVariety")
+}
+
+type Comment @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  title: String
+  body: String
+  owner: String
+}
+
+type Picture @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  photoKey: String
+  category: String
+  comments: String
+}
+
+type DestinationBox @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  palletNumber: String
+  grower: String
+  variety: String
+  packFormat: String
+  liner: String
+}
+
+type DestinationReport @model @auth(rules: [{allow: private}, {allow: public}  ]) {
+  id: ID!
+  species: String
+  variety: String
+  packFormat: String
+  referNum: String
+  containerNumber: String
+  vessel: String
+  expectedQuantity: String
+  recomendedSampleSize: String
+  arrivalDate: String
+  InspectionDate: String
+  loggerTemperature: String
+  loggerTyp: String
+  palletType: String
+  loggerType: String
+  portDepot: String
+  label: String
+  state: String
+  ProgressiveDefect: String
+  nonProgressiveDefect: String
+  status: String
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+}
+
+type FinishBox @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  palletNumber: String
+  packing: String
+  grower: String
+  variety: String
+  packFormat: String
+  harvestDay: String
+  boxNetWeight: String
+  totalFruitCount: String
+  progressiveDefect: String
+  nonProgressiveDefect: String
+}
+
+type ReceptionBox @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  palletNumber: String
+  packing: String
+  grower: String
+  variety: String
+  packFormat: String
+  harvestDay: String
+  boxNetWeight: String
+  totalFruitCount: String
+  ProgressiveDefect: String
+  nonProgressiveDefect: String
+  status: String
+}
+
+type IntakeReport @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  cliente: String
+  exportador: String
+  productor: String
+  especie: String
+  variedad: String
+  kgEntrada: Float
+  autor: String
+  gps: String
+  numeroReferencia: String
+  statusReport: String
+  estado: String
+  defectoProgresivo: Float
+  defectoNoProgresivo: Float
+  defectoCritico: Float
+  nMuestras: Int
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+}
+
+type FinishReport @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  cliente: String
+  exportador: String
+  productor: String
+  especie: String
+  variedad: String
+  calibre: String
+  kgEntrada: Float
+  autor: String
+  gps: String
+  numeroReferencia: String
+  numeroContenedor: String
+  sitioEmalaje: String
+  formatoEmbalaje: String
+  statusReport: String
+  estado: String
+  defectoProgresivo: Float
+  defectoNoProgresivo: Float
+  defectoCritico: Float
+  nMuestras: Int
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+}
+
+type Plot @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  species: String
+  variety: String
+  status: String
+}
+
+type VisitReport @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  location: String
+  exporter: String
+  grower: String
+  photo: String
+  status: String
+  companyID: ID! @index(name: "byCompany")
+  clientID: ID! @index(name: "byClient")
+}
+
+enum DefectTypes {
+  PROGRESSIVE
+  NONPROGRESSIVE
+}
+
+type DefectVariety @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  name: String!
+  type: DefectTypes!
+  cautionValue: Float!
+  dangerValue: Float!
+  isCritical: Boolean!
+  varietyID: ID! @index(name: "byVariety")
+}
+
+type SetCompany @model @auth(rules: [{allow: private}, {allow: public} ]) {
+  id: ID!
+  visitProcess: Boolean
+  receptionProcess: Boolean
+  finishedProductProcess: Boolean
+  destinationProcess: Boolean
+  automaticState: Boolean
+}
+ 
